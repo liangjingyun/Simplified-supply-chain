@@ -1,5 +1,9 @@
 import numpy as np
 
+## set price equation
+def price_func(no_links,gamma):
+  
+  return round(1/(no_links**gamma),2)
 
 ## get min profit indexes
 def get_min_indexes(profit_matrix, min_profit):
