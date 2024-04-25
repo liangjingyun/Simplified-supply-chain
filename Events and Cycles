@@ -1,0 +1,42 @@
+import numpy as np
+
+for i in range(num_of_events):
+  print("\nEvent: ",i+1)
+  num_disruptions = 0
+
+  # get min values and indexes
+  non_zero_values = profit_matrix[profit_matrix != 0]
+  min_profit = non_zero_values.min()
+  print("\nminprofit: ",min_profit)
+  min_indexes_list = get_min_indexes(profit_matrix, min_profit)[0]
+  min_indexes = get_min_indexes(profit_matrix, min_profit)[1]
+  num_disruptions = len(min_indexes)
+
+  if min_profit >= curr_min_profit:
+    curr_min_profit = min_profit
+    min_profit_list.append(round(curr_min_profit,2))
+    disruptions_per_event.append(num_disruptions)
+    change_price(min_indexes, profit_matrix, retail_dict, dist_dict, manu_dict)
+    new_supply_chain(supply_chain,min_indexes_list, profit_matrix, rev_matrix, retail_cost_ratio, dist_cost_ratio, manu_cost_ratio, retail_dict, dist_dict, manu_dict)
+
+  else:
+    cycle_no = 1
+    while min_profit < curr_min_profit:
+      print("\nCycle: ",cycle_no)
+      change_price(min_indexes, profit_matrix, retail_dict, dist_dict, manu_dict)
+      new_supply_chain(supply_chain,min_indexes_list, profit_matrix, rev_matrix, retail_cost_ratio, dist_cost_ratio, manu_cost_ratio, retail_dict, dist_dict, manu_dict)
+      non_zero_values = profit_matrix[profit_matrix != 0]
+      min_profit = non_zero_values.min()
+      print("\nminprofit: ",min_profit)
+      min_indexes_list = get_min_indexes(profit_matrix, min_profit)[0]
+      min_indexes = get_min_indexes(profit_matrix, min_profit)[1]
+      num_disruptions += len(min_indexes)
+      cycle_no += 1
+    curr_min_profit = min_profit
+    min_profit_list.append(round(curr_min_profit,2))
+    disruptions_per_event.append(num_disruptions)
+    change_price(min_indexes, profit_matrix, retail_dict, dist_dict, manu_dict)
+    new_supply_chain(supply_chain,min_indexes_list, profit_matrix, rev_matrix, retail_cost_ratio, dist_cost_ratio, manu_cost_ratio, retail_dict, dist_dict, manu_dict)
+
+print("Disruptions per event: ", disruptions_per_event)
+print("Min profit: ", min_profit_list)
