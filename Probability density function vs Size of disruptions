@@ -1,0 +1,48 @@
+import matplotlib.pyplot as plt
+from collections import Counter
+import math
+import numpy as np
+
+max_disruption = np.max(disruptions_per_event)
+#print("max disruption: ",max_disruption)
+
+max_power = int(math.log2(max_disruption))
+if max_disruption > max_power:
+  max_power = max_power + 1
+print("max power: ",max_power)
+bin_sizes = np.array([2**i for i in range(max_power + 1)])
+#print(bin_sizes)
+
+frequencies = np.zeros(len(bin_sizes))
+for i in range(len(bin_sizes)):
+    lower_bound = bin_sizes[i-1] if i > 0 else 0
+    upper_bound = bin_sizes[i]
+    frequencies[i] = sum(1 for num in disruptions_per_event if lower_bound < num <= upper_bound)
+
+# Calculate the x and y values for plotting
+x_values = np.sqrt(bin_sizes[:-1] * bin_sizes[1:])
+print("x values: ",x_values)
+y_values = frequencies[:-1] / (bin_sizes[:-1]*num_of_events)
+print("y values: ",y_values)
+
+# prevent division of 0 in power law
+valid_indices = np.where((x_values > 0) & (y_values > 0))
+filtered_x_values = x_values[valid_indices]
+filtered_y_values = y_values[valid_indices]
+
+# Fit a power-law trendline to the data
+coefficients = np.polyfit(np.log(filtered_x_values), np.log(filtered_y_values), 1)
+power_trendline = np.exp(coefficients[1]) * filtered_x_values ** coefficients[0]
+
+# Plot the scatter plot and the power trendline
+plt.scatter(filtered_x_values, filtered_y_values, label='Data')
+plt.plot(filtered_x_values, power_trendline, color='red', label='Power Trendline')
+
+# import matplotlib.pyplot as plt
+#plt.scatter(filtered_x_values,y_values)
+plt.xscale('log', base=2)
+plt.yscale('log', base=2)
+plt.title('Probability Density of Disruptions vs Size of Disruption')
+plt.xlabel('Disruption Size (Log)')
+plt.ylabel('Probability Density Function (Log)')
+plt.show()
