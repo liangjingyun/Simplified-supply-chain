@@ -1,0 +1,38 @@
+import numpy as np
+import random
+
+## basic structure of supply chain matrix
+agent_types = 5 # cust, retail, dist, manu, supplier
+num = 100 # number of cust / retailers
+num_list = list(range(num))
+num_of_events = 300
+disruptions_per_event = []
+min_profit_list = []
+curr_min_profit = 0
+
+## prep dictionary to keep track of agents
+cons_dict = {}
+retail_dict = {}
+dist_dict = {}
+manu_dict = {}
+supp_dict = {}
+
+for i in range (num):
+  cons_dict[i] = 1
+  retail_dict[i] = 0
+  dist_dict[i] = 0
+  manu_dict[i] = 0
+  supp_dict[i] = 0
+
+## set price equation
+def price_func(no_links,gamma):
+  return round(1/(no_links**gamma),2)
+
+## set cost ratio
+retail_cost_ratio = []
+dist_cost_ratio = []
+manu_cost_ratio = []
+for i in range(num):
+  manu_cost_ratio.append(round(random.uniform(0.60,0.80),4))
+  dist_cost_ratio.append(round(random.uniform(0.65,0.80),4))
+  retail_cost_ratio.append(round(random.uniform(0.75,0.85),4))
