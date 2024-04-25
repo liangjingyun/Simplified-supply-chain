@@ -24,10 +24,6 @@ for i in range (num):
   manu_dict[i] = 0
   supp_dict[i] = 0
 
-## set price equation
-def price_func(no_links,gamma):
-  return round(1/(no_links**gamma),2)
-
 ## set cost ratio
 retail_cost_ratio = []
 dist_cost_ratio = []
