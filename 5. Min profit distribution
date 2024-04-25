@@ -1,0 +1,7 @@
+import matplotlib.pyplot as plt
+
+plt.plot(range(num_of_events), min_profit_list, marker='o', linestyle='-')
+plt.xlabel('Event')
+plt.ylabel('Profit')
+plt.title('Distribution of profit (Network Size = 500 agents)') # change number according to number of agents
+plt.show()
