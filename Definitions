@@ -1,0 +1,53 @@
+import numpy as np
+
+
+## get min profit indexes
+def get_min_indexes(profit_matrix, min_profit):
+  min_indexes = np.argwhere(profit_matrix == min_profit).tolist()
+  min_indexes_list = []
+  for row in profit_matrix[1:4]:
+    min_indexes_row = np.argwhere(row == min_profit).flatten().tolist()
+    min_indexes_list.append(min_indexes_row)
+
+  return  min_indexes_list, min_indexes
+
+## price = 0 for killed nodes
+def change_price(min_indexes, profit_matrix, retail_dict, dist_dict, manu_dict):
+  for i in range(len(min_indexes)):
+    agent_type = min_indexes[i][0]
+    agent_value = min_indexes[i][1]
+    profit_matrix[agent_type][agent_value] = 0
+    if agent_type == 1:
+      retail_dict[agent_value] = 0
+    elif agent_type == 2:
+      dist_dict[agent_value] = 0
+    elif agent_type == 3:
+      manu_dict[agent_value] = 0
+  
+  return profit_matrix, retail_dict, dist_dict, manu_dict
+
+## create new supply chain without killed nodes
+def new_supply_chain(supply_chain,min_indexes_list, profit_matrix, rev_matrix, retail_cost_ratio, dist_cost_ratio, manu_cost_ratio, retail_dict, dist_dict, manu_dict):
+  for i in range (len(min_indexes_list)):
+    remaining_agents = [num for num in num_list if num not in min_indexes_list[i]]
+    #print("remaining for ",i+1,":", remaining_agents)
+    for j in range (len(min_indexes_list[i])):
+      previous_agent_no = min_indexes_list[i][j] # eg = [[0]], 1st retailer
+      for k in range(num):
+        if supply_chain[i+1][k]== previous_agent_no:
+          selected_agent_val = random.choice(remaining_agents)
+          supply_chain[i+1][k] = selected_agent_val
+          if i+1 == 1:
+            retail_dict[selected_agent_val] = retail_dict.get(selected_agent_val)+1
+            rev_matrix[i+1][selected_agent_val] = price_func(retail_dict[selected_agent_val],0.1)*retail_dict[selected_agent_val]
+            profit_matrix[i+1][selected_agent_val] = round((1-retail_cost_ratio[selected_agent_val])*rev_matrix[i+1][selected_agent_val],2)
+          elif i+1 == 2:
+            dist_dict[selected_agent_val] = dist_dict.get(selected_agent_val)+1
+            rev_matrix[i+1][selected_agent_val] = price_func(dist_dict[selected_agent_val],0.3)*dist_dict[selected_agent_val]
+            profit_matrix[i+1][selected_agent_val] = round((1-dist_cost_ratio[selected_agent_val])*rev_matrix[i+1][selected_agent_val],2)
+          elif i+1 == 3:
+            manu_dict[selected_agent_val] = manu_dict.get(selected_agent_val)+1
+            rev_matrix[i+1][selected_agent_val] = price_func(manu_dict[selected_agent_val],0.5)*manu_dict[selected_agent_val]
+            profit_matrix[i+1][selected_agent_val] = round((1 - manu_cost_ratio[selected_agent_val])*rev_matrix[i+1][selected_agent_val],2)
+  
+  return supply_chain, profit_matrix, rev_matrix, retail_cost_ratio, dist_cost_ratio, manu_cost_ratio, retail_dict, dist_dict, manu_dict
