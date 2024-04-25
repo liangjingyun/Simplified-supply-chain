@@ -1,0 +1,25 @@
+import numpy as np
+import random
+
+# supply chain
+supply_chain = np.zeros((agent_types, num))
+rev_matrix = np.zeros((agent_types, num))
+profit_matrix = np.zeros((agent_types,num))
+
+for i in range(num):
+  supply_chain[0][i] = i # which cust
+  for j in range(1,agent_types):
+    agent_val = np.random.randint(num) # selection of retail, manu, dist and supplier
+    supply_chain[j][i] = agent_val
+    if j == 1:
+      retail_dict[agent_val] = retail_dict.get(agent_val)+1
+      rev_matrix[j][agent_val] = price_func(retail_dict[agent_val],0.1)*retail_dict[agent_val]
+      profit_matrix[j][agent_val] = round((1-retail_cost_ratio[agent_val])*rev_matrix[j][agent_val],2)
+    elif j == 2:
+      dist_dict[agent_val] = dist_dict.get(agent_val)+1
+      rev_matrix[j][agent_val] = price_func(dist_dict[agent_val],0.3)*dist_dict[agent_val]
+      profit_matrix[j][agent_val] = round((1-dist_cost_ratio[agent_val])*rev_matrix[j][agent_val],2)
+    elif j == 3:
+      manu_dict[agent_val] = manu_dict.get(agent_val)+1
+      rev_matrix[j][agent_val] = price_func(manu_dict[agent_val],0.5)*manu_dict[agent_val]
+      profit_matrix[j][agent_val] = round((1 - manu_cost_ratio[agent_val])*rev_matrix[j][agent_val],2)
